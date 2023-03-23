@@ -3,7 +3,7 @@ package opgauss
 import (
 	"database/sql"
 	"fmt"
-	"gorm.io/gorm/utils"
+	"gorm.io/gorm/callbacks"
 	"regexp"
 	"strconv"
 	"strings"
@@ -11,7 +11,6 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/stdlib"
 	"gorm.io/gorm"
-	"gorm.io/gorm/callbacks"
 	"gorm.io/gorm/clause"
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/migrator"
@@ -44,51 +43,51 @@ func (dialector Dialector) Name() string {
 
 var timeZoneMatcher = regexp.MustCompile("(time_zone|TimeZone)=(.*?)($|&| )")
 
-var (
-	// CreateClauses create clauses
-	CreateClauses = []string{"INSERT", "VALUES", "ON CONFLICT"}
-	// QueryClauses query clauses
-	QueryClauses = []string{}
-	// UpdateClauses update clauses
-	UpdateClauses = []string{"UPDATE", "SET", "WHERE", "RETURNING"}
-	// DeleteClauses delete clauses
-	DeleteClauses = []string{"DELETE", "FROM", "WHERE", "RETURNING"}
-)
+//var (
+//	// CreateClauses create clauses
+//	CreateClauses = []string{"INSERT", "VALUES", "ON CONFLICT"}
+//	// QueryClauses query clauses
+//	QueryClauses = []string{}
+//	// UpdateClauses update clauses
+//	UpdateClauses = []string{"UPDATE", "SET", "WHERE", "RETURNING"}
+//	// DeleteClauses delete clauses
+//	DeleteClauses = []string{"DELETE", "FROM", "WHERE", "RETURNING"}
+//)
 
 func (dialector Dialector) Initialize(db *gorm.DB) (err error) {
 	// register callbacks
 	if !dialector.WithoutReturning {
-		//callbacks.RegisterDefaultCallbacks(db, &callbacks.Config{
-		//	CreateClauses: []string{"INSERT", "VALUES", "ON CONFLICT", "RETURNING"},
-		//	UpdateClauses: []string{"UPDATE", "SET", "WHERE", "RETURNING"},
-		//	DeleteClauses: []string{"DELETE", "FROM", "WHERE", "RETURNING"},
-		//})
-		callbackConfig := &callbacks.Config{
-			CreateClauses: CreateClauses,
-			QueryClauses:  QueryClauses,
-			UpdateClauses: UpdateClauses,
-			DeleteClauses: DeleteClauses,
-		}
-
-		callbackConfig.LastInsertIDReversed = true
+		callbacks.RegisterDefaultCallbacks(db, &callbacks.Config{
+			CreateClauses: []string{"INSERT", "VALUES", "ON CONFLICT", "RETURNING"},
+			UpdateClauses: []string{"UPDATE", "SET", "WHERE", "RETURNING"},
+			DeleteClauses: []string{"DELETE", "FROM", "WHERE", "RETURNING"},
+		})
+		//callbackConfig := &callbacks.Config{
+		//	CreateClauses: CreateClauses,
+		//	QueryClauses:  QueryClauses,
+		//	UpdateClauses: UpdateClauses,
+		//	DeleteClauses: DeleteClauses,
+		//}
+		//
+		//callbackConfig.LastInsertIDReversed = true
 
 		//if !utils.Contains(callbackConfig.CreateClauses, "RETURNING") {
 		//	callbackConfig.CreateClauses = append(callbackConfig.CreateClauses, "RETURNING")
 		//}
 
-		if !utils.Contains(callbackConfig.UpdateClauses, "RETURNING") {
-			callbackConfig.UpdateClauses = append(callbackConfig.UpdateClauses, "RETURNING")
-		}
-
-		if !utils.Contains(callbackConfig.DeleteClauses, "RETURNING") {
-			callbackConfig.DeleteClauses = append(callbackConfig.DeleteClauses, "RETURNING")
-		}
-
-		callbacks.RegisterDefaultCallbacks(db, callbackConfig)
-
-		//for k, v := range dialector.ClauseBuilders() {
-		//	db.ClauseBuilders[k] = v
+		//if !utils.Contains(callbackConfig.UpdateClauses, "RETURNING") {
+		//	callbackConfig.UpdateClauses = append(callbackConfig.UpdateClauses, "RETURNING")
 		//}
+		//
+		//if !utils.Contains(callbackConfig.DeleteClauses, "RETURNING") {
+		//	callbackConfig.DeleteClauses = append(callbackConfig.DeleteClauses, "RETURNING")
+		//}
+		//
+		//callbacks.RegisterDefaultCallbacks(db, callbackConfig)
+
+		for k, v := range dialector.ClauseBuilders() {
+			db.ClauseBuilders[k] = v
+		}
 	}
 
 	if dialector.Conn != nil {
