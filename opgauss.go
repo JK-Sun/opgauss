@@ -86,9 +86,9 @@ func (dialector Dialector) Initialize(db *gorm.DB) (err error) {
 
 		callbacks.RegisterDefaultCallbacks(db, callbackConfig)
 
-		for k, v := range dialector.ClauseBuilders() {
-			db.ClauseBuilders[k] = v
-		}
+		//for k, v := range dialector.ClauseBuilders() {
+		//	db.ClauseBuilders[k] = v
+		//}
 	}
 
 	if dialector.Conn != nil {
