@@ -187,7 +187,7 @@ func (dialector Dialector) ClauseBuilders() map[string]clause.ClauseBuilder {
 				return
 			}
 
-			builder.WriteString("")
+			builder.WriteString("aaaaaaaaaa")
 		},
 	}
 
