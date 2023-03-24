@@ -43,48 +43,14 @@ func (dialector Dialector) Name() string {
 
 var timeZoneMatcher = regexp.MustCompile("(time_zone|TimeZone)=(.*?)($|&| )")
 
-//var (
-//	// CreateClauses create clauses
-//	CreateClauses = []string{"INSERT", "VALUES", "ON CONFLICT"}
-//	// QueryClauses query clauses
-//	QueryClauses = []string{}
-//	// UpdateClauses update clauses
-//	UpdateClauses = []string{"UPDATE", "SET", "WHERE", "RETURNING"}
-//	// DeleteClauses delete clauses
-//	DeleteClauses = []string{"DELETE", "FROM", "WHERE", "RETURNING"}
-//)
-
 func (dialector Dialector) Initialize(db *gorm.DB) (err error) {
 	// register callbacks
 	if !dialector.WithoutReturning {
 		callbacks.RegisterDefaultCallbacks(db, &callbacks.Config{
-			CreateClauses: []string{"INSERT", "VALUES", "ON CONFLICT"},
-			//CreateClauses: []string{"INSERT", "VALUES", "ON CONFLICT"},
+			CreateClauses: []string{"INSERT", "VALUES", "ON CONFLICT", "RETURNING"},
 			UpdateClauses: []string{"UPDATE", "SET", "WHERE", "RETURNING"},
 			DeleteClauses: []string{"DELETE", "FROM", "WHERE", "RETURNING"},
 		})
-		//callbackConfig := &callbacks.Config{
-		//	CreateClauses: CreateClauses,
-		//	QueryClauses:  QueryClauses,
-		//	UpdateClauses: UpdateClauses,
-		//	DeleteClauses: DeleteClauses,
-		//}
-		//
-		//callbackConfig.LastInsertIDReversed = true
-
-		//if !utils.Contains(callbackConfig.CreateClauses, "RETURNING") {
-		//	callbackConfig.CreateClauses = append(callbackConfig.CreateClauses, "RETURNING")
-		//}
-
-		//if !utils.Contains(callbackConfig.UpdateClauses, "RETURNING") {
-		//	callbackConfig.UpdateClauses = append(callbackConfig.UpdateClauses, "RETURNING")
-		//}
-		//
-		//if !utils.Contains(callbackConfig.DeleteClauses, "RETURNING") {
-		//	callbackConfig.DeleteClauses = append(callbackConfig.DeleteClauses, "RETURNING")
-		//}
-		//
-		//callbacks.RegisterDefaultCallbacks(db, callbackConfig)
 
 		for k, v := range dialector.ClauseBuilders() {
 			db.ClauseBuilders[k] = v
@@ -121,8 +87,6 @@ const (
 	ClauseValues = "VALUES"
 	// ClauseFor for clause.ClauseBuilder FOR key
 	ClauseFor = "FOR"
-	// ClauseReturning ClauseFor for clause.ClauseBuilder RETURNING key
-	ClauseReturning = "RETURNING"
 )
 
 func (dialector Dialector) ClauseBuilders() map[string]clause.ClauseBuilder {
@@ -180,16 +144,6 @@ func (dialector Dialector) ClauseBuilders() map[string]clause.ClauseBuilder {
 			}
 			c.Build(builder)
 		},
-		ClauseReturning: func(c clause.Clause, builder clause.Builder) {
-			//_, ok := c.Expression.(clause.OnConflict)
-			//if !ok {
-			//	c.Build(builder)
-			//	return
-			//}
-
-			builder.WriteString("RETURNING")
-			c.Build(builder)
-		},
 	}
 
 	clauseBuilders[ClauseFor] = func(c clause.Clause, builder clause.Builder) {
@@ -199,18 +153,6 @@ func (dialector Dialector) ClauseBuilders() map[string]clause.ClauseBuilder {
 		}
 		c.Build(builder)
 	}
-
-	//clauseBuilders[ClauseReturning] = func(c clause.Clause, builder clause.Builder) {
-	//	//_, ok := c.Expression.(clause.OnConflict)
-	//	//if !ok {
-	//	//	c.Build(builder)
-	//	//	return
-	//	//}
-	//
-	//	builder.WriteString("bbbbbbbbbbbb")
-	//	builder.
-	//		c.Build(builder)
-	//}
 
 	return clauseBuilders
 }
