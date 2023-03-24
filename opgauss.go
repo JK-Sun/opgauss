@@ -116,7 +116,7 @@ func (dialector Dialector) Initialize(db *gorm.DB) (err error) {
 
 const (
 	// ClauseOnConflict for clause.ClauseBuilder ON CONFLICT key
-	ClauseOnConflict = "ON CONFLICT RETURNING"
+	ClauseOnConflict = "ON CONFLICT"
 	// ClauseValues for clause.ClauseBuilder VALUES key
 	ClauseValues = "VALUES"
 	// ClauseFor for clause.ClauseBuilder FOR key
@@ -181,11 +181,11 @@ func (dialector Dialector) ClauseBuilders() map[string]clause.ClauseBuilder {
 			c.Build(builder)
 		},
 		ClauseReturning: func(c clause.Clause, builder clause.Builder) {
-			_, ok := c.Expression.(clause.OnConflict)
-			if !ok {
-				c.Build(builder)
-				return
-			}
+			//_, ok := c.Expression.(clause.OnConflict)
+			//if !ok {
+			//	c.Build(builder)
+			//	return
+			//}
 
 			builder.WriteString("aaaaaaaaaa")
 		},
@@ -200,13 +200,13 @@ func (dialector Dialector) ClauseBuilders() map[string]clause.ClauseBuilder {
 	}
 
 	clauseBuilders[ClauseReturning] = func(c clause.Clause, builder clause.Builder) {
-		_, ok := c.Expression.(clause.OnConflict)
-		if !ok {
-			c.Build(builder)
-			return
-		}
+		//_, ok := c.Expression.(clause.OnConflict)
+		//if !ok {
+		//	c.Build(builder)
+		//	return
+		//}
 
-		builder.WriteString("aaaaaaaaaa")
+		builder.WriteString("bbbbbbbbbbbb")
 		c.Build(builder)
 	}
 
