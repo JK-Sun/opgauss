@@ -116,7 +116,7 @@ func (dialector Dialector) Initialize(db *gorm.DB) (err error) {
 
 const (
 	// ClauseOnConflict for clause.ClauseBuilder ON CONFLICT key
-	ClauseOnConflict = "ON CONFLICT"
+	ClauseOnConflict = "ON CONFLICT RETURNING"
 	// ClauseValues for clause.ClauseBuilder VALUES key
 	ClauseValues = "VALUES"
 	// ClauseFor for clause.ClauseBuilder FOR key
