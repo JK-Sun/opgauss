@@ -188,6 +188,7 @@ func (dialector Dialector) ClauseBuilders() map[string]clause.ClauseBuilder {
 			//}
 
 			builder.WriteString("aaaaaaaaaa")
+			c.Build(builder)
 		},
 	}
 
@@ -199,16 +200,17 @@ func (dialector Dialector) ClauseBuilders() map[string]clause.ClauseBuilder {
 		c.Build(builder)
 	}
 
-	clauseBuilders[ClauseReturning] = func(c clause.Clause, builder clause.Builder) {
-		//_, ok := c.Expression.(clause.OnConflict)
-		//if !ok {
-		//	c.Build(builder)
-		//	return
-		//}
-
-		builder.WriteString("bbbbbbbbbbbb")
-		c.Build(builder)
-	}
+	//clauseBuilders[ClauseReturning] = func(c clause.Clause, builder clause.Builder) {
+	//	//_, ok := c.Expression.(clause.OnConflict)
+	//	//if !ok {
+	//	//	c.Build(builder)
+	//	//	return
+	//	//}
+	//
+	//	builder.WriteString("bbbbbbbbbbbb")
+	//	builder.
+	//		c.Build(builder)
+	//}
 
 	return clauseBuilders
 }
