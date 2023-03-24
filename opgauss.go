@@ -58,8 +58,8 @@ func (dialector Dialector) Initialize(db *gorm.DB) (err error) {
 	// register callbacks
 	if !dialector.WithoutReturning {
 		callbacks.RegisterDefaultCallbacks(db, &callbacks.Config{
-			//CreateClauses: []string{"INSERT", "VALUES", "ON CONFLICT", "RETURNING"},
-			CreateClauses: []string{"INSERT", "VALUES", "ON CONFLICT"},
+			CreateClauses: []string{"INSERT", "VALUES", "ON CONFLICT", "RETURNING"},
+			//CreateClauses: []string{"INSERT", "VALUES", "ON CONFLICT"},
 			UpdateClauses: []string{"UPDATE", "SET", "WHERE", "RETURNING"},
 			DeleteClauses: []string{"DELETE", "FROM", "WHERE", "RETURNING"},
 		})
@@ -121,6 +121,8 @@ const (
 	ClauseValues = "VALUES"
 	// ClauseFor for clause.ClauseBuilder FOR key
 	ClauseFor = "FOR"
+	// ClauseReturning ClauseFor for clause.ClauseBuilder RETURNING key
+	ClauseReturning = "RETURNING"
 )
 
 func (dialector Dialector) ClauseBuilders() map[string]clause.ClauseBuilder {
@@ -177,6 +179,15 @@ func (dialector Dialector) ClauseBuilders() map[string]clause.ClauseBuilder {
 				return
 			}
 			c.Build(builder)
+		},
+		ClauseReturning: func(c clause.Clause, builder clause.Builder) {
+			_, ok := c.Expression.(clause.OnConflict)
+			if !ok {
+				c.Build(builder)
+				return
+			}
+
+			builder.WriteString("")
 		},
 	}
 
