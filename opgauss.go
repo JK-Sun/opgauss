@@ -199,7 +199,7 @@ func (dialector Dialector) ClauseBuilders() map[string]clause.ClauseBuilder {
 		c.Build(builder)
 	}
 
-	clauseBuilders[ClauseValues] = func(c clause.Clause, builder clause.Builder) {
+	clauseBuilders[ClauseReturning] = func(c clause.Clause, builder clause.Builder) {
 		_, ok := c.Expression.(clause.OnConflict)
 		if !ok {
 			c.Build(builder)
